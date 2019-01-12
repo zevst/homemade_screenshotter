@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Icon=/opt/homemade_screenshotter/icon.png
+Type=Application
+Categories=Images;screenshots;
+Exec=/bin/bash /opt/homemade_screenshotter/upload.sh
+Name=Homemade Screenshotter
+GenericName=Homemade Screenshotter
+StartupNotify=false
+Keywords=homemade screenshots upload
+# put or ln this file to /usr/share/applications with sudo
