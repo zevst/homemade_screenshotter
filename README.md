@@ -6,7 +6,7 @@ Install
 
 * Install *xclip*
 * Clone this repo to */opt* directory
-* Copy *conf.sample.ini* to *conf.ini* and edit it
+* Copy *conf.sample.ini* to *conf.ini* and fill your configuration in *conf.ini*
 * Run **sudo ln homemade-screenshotter.desktop /usr/share/applications/**
 * Add app as favorities on the Dock of your desktop.
 
