@@ -35,9 +35,11 @@
 		<script type="text/javascript" src="/prism/prism.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
+				var content = $('pre', '#main-content'), code = $('code', content)
+
 				$('#menu button')
 					.on('click', function() {
-						var lang = $(this).val(), content = $('pre', '#main-content'), code = $('code', content);
+						var lang = $(this).val();
 						content.removeClass().addClass('line-numbers language-'+lang);
 						code.removeClass().addClass('language-'+lang);
 						$('#menu button').removeClass();
