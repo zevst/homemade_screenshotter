@@ -1,7 +1,6 @@
 #!/bin/bash
 APPATH="/opt/homemade_screenshotter"; #"$(pwd)"
-echo $APPATH
-cd /tmp
+cd /tmp;
 
 #getting content from clipboard and saving as a picture or text (if picture failed)
 RANDNAME="$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)";
@@ -11,21 +10,26 @@ MIME="$(file -b --mime-type $TMPNAME)"; # there can be situation when xclip succ
 MSG_TITLE="PNG";
 if [ "$XCLIPERROR" != "" -o "$MIME" != "image/png" ]; then
 	TMPNAME="$RANDNAME$(date +_%d.%m.%Y.html)";
-	echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /></head><body><pre><code>' > $TMPNAME;
-	XCLIPERROR="$(xclip -sel clip -t UTF8_STRING -o | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' >>$TMPNAME)";
-	echo '</code></pre></body></html>' >> $TMPNAME;
-	MSG_TITLE="TXT"
-	if [ "$XCLIPERROR" != "" ]; then
-		notify-send -u "critical" "Error" "$XCLIPERROR";
-		exit 1;
+	CONTENT="$(xclip -sel clip -t UTF8_STRING -o | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')";
+	CONTENTLEN=${#CONTENT};
+
+	HTMLCONTENT='';
+	if [ "$CONTENTLEN" -gt 80000 ]; then
+		HTMLCONTENT=`cat $APPATH/template_heavy.html`;
+	else
+		HTMLCONTENT=`cat $APPATH/template_light.html`;
 	fi
+
+	#HTMLCONTENT="${HTMLCONTENT/\#CONTENT\#/$CONTENT}"
+	echo "${HTMLCONTENT/\#CONTENT\#/$CONTENT}" > $TMPNAME;
+	MSG_TITLE="TXT"
 fi
 
 #uploading by scp(ssh) and notifying with resource link
 . $APPATH/conf.ini #this is only BASH-supported import
-scp $TMPNAME ${ssh_user}@${ssh_address}:${server_root}/${domain_path}
+scp $TMPNAME ${ssh_user}@${ssh_address}:${server_root}/i/
 rm -f $TMPNAME;
-LINK="${domain_proto}://${domain_name}/${domain_path}$TMPNAME";
+LINK="${domain_proto}://${domain_name}/i/$TMPNAME";
 echo $LINK | xclip -sel clip;
 notify-send -c "transfer.complete" -u "normal" "$MSG_TITLE" "Your file is uploaded as $LINK";
 #read -p "Press enter to finish or wait 2 seconds" -t 2;

@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Uploaded text (highlighted)</title>
+        <link rel="stylesheet" href="/prism/prism.css" />
+        <script src="/jquery/jquery-3.3.1.min.js"></script>
+  		<style>
+  			button.active {
+  				background-color: #ccc;
+  				font-size: larger;
+  			}
+  		</style>
+	</head>
+	<body>
+		<div id="menu">
+			<button value="shell">BASH</button>
+			<button value="cpp">C++</button>
+			<button value="css">CSS</button>
+			<button value="go">Go</button>
+			<button value="javascript">JS</button>
+			<button value="markup">HTML/XML</button>
+			<button value="markdown">Markdown</button>
+			<button value="plain" id="plain">Plaintext</button>
+			<button value="php">PHP</button>
+			<button value="python">Python</button>
+			<button value="sql">SQL</button>
+			<button value="toml">TOML</button>
+			<button value="twig">Twig</button>
+			<button value="yaml">YAML</button>
+			<button value="typescript">TS</button>
+		</div>
+		<div id="main-content">
+			<pre class="line-numbers language-plain"><code class="language-plain">#CONTENT#</code></pre>
+		</div>
+		<script type="text/javascript" src="/prism/prism.js"></script>
+		<script type="text/javascript">
+			var doSelect = function(element) {
+				var lang = element.val(), content = $('pre', '#main-content'), code = $('code', content);
+				content.removeClass().addClass('line-numbers language-'+lang);
+				code.removeClass().addClass('language-'+lang);
+				$('#menu button').removeClass();
+				element.addClass('active');
+				Prism.highlightElement(code.get(0));
+			}
+
+			$(document).ready(function(){
+				$('#menu button')
+					.on('click', function() {
+						doSelect($(this));
+					});
+				$('#plain').triggerHandler('click');
+			});
+		</script>
+	</body>
+</html>
