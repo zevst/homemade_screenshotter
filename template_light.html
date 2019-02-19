@@ -34,19 +34,15 @@
 		</div>
 		<script type="text/javascript" src="/prism/prism.js"></script>
 		<script type="text/javascript">
-			var doSelect = function(element) {
-				var lang = element.val(), content = $('pre', '#main-content'), code = $('code', content);
-				content.removeClass().addClass('line-numbers language-'+lang);
-				code.removeClass().addClass('language-'+lang);
-				$('#menu button').removeClass();
-				element.addClass('active');
-				Prism.highlightElement(code.get(0));
-			}
-
 			$(document).ready(function(){
 				$('#menu button')
 					.on('click', function() {
-						doSelect($(this));
+						var lang = $(this).val(), content = $('pre', '#main-content'), code = $('code', content);
+						content.removeClass().addClass('line-numbers language-'+lang);
+						code.removeClass().addClass('language-'+lang);
+						$('#menu button').removeClass();
+						$(this).addClass('active');
+						Prism.highlightElement(code.get(0));
 					});
 				$('#plain').triggerHandler('click');
 			});
