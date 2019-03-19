@@ -58,7 +58,7 @@
 					content = $('pre', '#main-content'),
 					code = $('code', content);
 				if (hash) {
-					hash_elements = location.hash.substring(1).split('_');
+					hash_elements = hash.substring(1).split('_');
 					if (hash_elements.length == 2) {
 						lang = hash_elements[0];
 						wrap = hash_elements[1];
