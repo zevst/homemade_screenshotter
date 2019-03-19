@@ -9,48 +9,103 @@
   				background-color: #ccc;
   				font-size: larger;
   			}
+  			div.menu + br {
+  				clear: left;
+  			}
+  			div.menu div.langs {
+  				float: left;
+  			}
+  			div.menu div.wrap {
+  				float: right;
+  			}
   		</style>
 	</head>
 	<body>
-		<div id="menu">
-			<button value="shell">BASH</button>
-			<button value="cpp">C++</button>
-			<button value="css">CSS</button>
-			<button value="go">Go</button>
-			<button value="javascript">JS</button>
-			<button value="markup">HTML/XML</button>
-			<button value="markdown">Markdown</button>
-			<button value="plain">Plaintext</button>
-			<button value="php">PHP</button>
-			<button value="python">Python</button>
-			<button value="sql">SQL</button>
-			<button value="toml">TOML</button>
-			<button value="twig">Twig</button>
-			<button value="yaml">YAML</button>
-			<button value="typescript">TS</button>
+		<div class="menu">
+			<div class="langs">
+				<button value="shell">BASH</button>
+				<button value="cpp">C++</button>
+				<button value="css">CSS</button>
+				<button value="go">Go</button>
+				<button value="javascript">JS</button>
+				<button value="markup">HTML/XML</button>
+				<button value="markdown">Markdown</button>
+				<button value="plain">Plaintext</button>
+				<button value="php">PHP</button>
+				<button value="python">Python</button>
+				<button value="sql">SQL</button>
+				<button value="toml">TOML</button>
+				<button value="twig">Twig</button>
+				<button value="yaml">YAML</button>
+				<button value="typescript">TS</button>
+			</div>
+			<div class="wrap">
+				<button value="nowrap">Nowrap</button>
+				<button value="wrap">Wrap</button>
+			</div>
 		</div>
+		<br />
 		<div id="main-content">
 			<pre class="line-numbers language-plain"><code class="language-plain">#CONTENT#</code></pre>
 		</div>
 		<script type="text/javascript" src="/prism/prism.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				var content = $('pre', '#main-content'), code = $('code', content), hash = location.hash;
+				var 
+					hash = location.hash, 
+					lang = 'plain', 
+					wrap = 'nowrap',
+					content = $('pre', '#main-content'),
+					code = $('code', content);
+				if (hash) {
+					hash_elements = location.hash.substring(1).split('_');
+					if (hash_elements.length == 2) {
+						lang = hash_elements[0];
+						wrap = hash_elements[1];
+					}
+				}
+				
+				/**
+				* Main highlighter
+				*/
+				var reFormat = function() {
+					// classes for language highlighting
+					content.removeClass().addClass('line-numbers language-'+lang);
+					code.removeClass().addClass('language-'+lang);
+					// css for row wrap
+					if (wrap == 'wrap') {
+						content.css('white-space', 'pre-wrap');
+						code.css('white-space', 'pre-wrap');
+					} else {
+						content.css('white-space', 'pre');
+						code.css('white-space', 'pre');
+					}
+					// update url hash
+					location.hash = lang + '_' + wrap;
+					// perform highlighting
+					Prism.highlightElement(code.get(0));
+				}
 
-				$('#menu button')
+				// add click handlers
+				$('.menu .langs button')
 					.on('click', function() {
-						var lang = $(this).val();
-						content.removeClass().addClass('line-numbers language-'+lang);
-						code.removeClass().addClass('language-'+lang);
-						location.hash = lang;
-						$('#menu button').removeClass();
+						lang = $(this).val();
+						$('.menu .langs button').removeClass();
 						$(this).addClass('active');
-						Prism.highlightElement(code.get(0));
+						reFormat();
 					});
-				if (!hash) {
-					hash = '#plain';
-				} 
-				$('#menu button[value="' + hash.substring(1) + '"]').triggerHandler('click');			
+				$('.menu .wrap button')
+					.on('click', function() {
+						wrap = $(this).val();
+						$('.menu .wrap button').removeClass();
+						$(this).addClass('active');
+						reFormat();
+					});
+				
+				// init forms
+				$('.menu .langs button[value="' + lang + '"]').addClass('active');
+				$('.menu .wrap button[value="' + wrap + '"]').addClass('active');
+				reFormat();
 			});
 		</script>
 	</body>
