@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"github.com/gotk3/gotk3/gdk"
@@ -61,7 +62,7 @@ func setupBtn(label string, onClick func()) *gtk.Button {
 	if err != nil {
 		log.Fatal("Unable to create button:", err)
 	}
-	btn.Connect("clicked", onClick)
+	_, _ = btn.Connect("clicked", onClick)
 	return btn
 }
 
@@ -185,7 +186,8 @@ func postFile(content []byte, extension string, targetURL string) (string, error
 	if err != nil {
 		return "", err
 	}
-	count, err = fw.Write([]byte(os.Getenv("ACCESS_KEY")))
+	hash := sha256.Sum256(append(content, []byte(os.Getenv("ACCESS_KEY"))...))
+	count, err = fw.Write([]byte(fmt.Sprintf("%x", hash)))
 	if err != nil {
 		return "", err
 	}
