@@ -1,4 +1,4 @@
-# homemade_screenshotter
+# homemade_screenshotter - uploader service
 tool to use your own server as a screenshots host for Ubuntu
 
 Install
