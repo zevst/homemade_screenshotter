@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"log"
 	"math/rand"
@@ -107,7 +108,8 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 		extension = "html"
 	}
 	accKey := r.FormValue("access_key")
-	if accKey != os.Getenv("ACCESS_KEY") {
+	hash := sha256.Sum256(append([]byte(content), []byte(os.Getenv("ACCESS_KEY"))...))
+	if accKey != fmt.Sprintf("%x", hash) {
 		w.WriteHeader(http.StatusForbidden)
 		_, _ = w.Write([]byte("Access Denied"))
 		return
