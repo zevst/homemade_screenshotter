@@ -8,6 +8,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/joho/godotenv"
+	"html"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -36,7 +37,7 @@ func setupWindow(title string) *gtk.Window {
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	win.SetDefaultSize(500, 300)
+	win.SetDefaultSize(500, 250)
 	win.SetPosition(gtk.WIN_POS_CENTER)
 	return win
 }
@@ -131,6 +132,8 @@ func sendTextToServer(text string, url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	text = html.EscapeString(text)
 	tplText = bytes.ReplaceAll(tplText, []byte("#CONTENT#"), []byte(text))
 
 	if fileUrl, err := postFile(tplText, "html", url); err != nil {
