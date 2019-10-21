@@ -117,7 +117,7 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 
 	filename := fmt.Sprintf(
 		"%s_%s.%s",
-		time.Now().Format("01.01.2019"),
+		time.Now().Format("02.01.2006"),
 		randStringRunes(15),
 		extension,
 	)
