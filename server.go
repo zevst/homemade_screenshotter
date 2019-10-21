@@ -40,6 +40,7 @@ func main() {
 	shutdown()
 }
 
+// handle - main HTTP handler
 func handle() {
 	router := mux.NewRouter()
 
@@ -59,6 +60,7 @@ func handle() {
 	log.Printf("Run web server: %v", os.Getenv("LISTEN_ADDR"))
 }
 
+// onPanic is Mux's middleware to handle panic situations
 func onPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer onActionPanic(w)
@@ -86,10 +88,12 @@ func onActionPanic(w http.ResponseWriter) {
 	}
 }
 
+// defaultAction shows any std response as "index" action
 func defaultAction(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("noaction"))
 }
 
+// uploadAction handles uploading, saving a file and returning back URL to file
 func uploadAction(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		defaultAction(w, r)
@@ -139,6 +143,7 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(os.Getenv("STATIC_SERVER_PATH") + filename))
 }
 
+// randStringRunes generates a random string of given length n
 func randStringRunes(n int) string {
 	b := make([]rune, n)
 	for i := range b {
@@ -147,12 +152,13 @@ func randStringRunes(n int) string {
 	return string(b)
 }
 
+// shutdown function performs graceful server shutdown
 func shutdown() {
 	log.Println("Service shutdown initiated")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := webServer.Shutdown(ctx); err != nil {
-		fmt.Fprint(os.Stderr, err)
+		_, _ = fmt.Fprint(os.Stderr, err)
 	} else {
 		log.Println("Web server successfully stopped")
 	}
