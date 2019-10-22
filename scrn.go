@@ -124,9 +124,9 @@ func main() {
 }
 
 func sendTextToServer(text string, url string) (string, error) {
-	tplFilename := "./template_heavy.html"
+	tplFilename := "./templates/heavy.html"
 	if len(text) < HeavyTxtTplSize {
-		tplFilename = "./template_light.html"
+		tplFilename = "./templates/light.html"
 	}
 	tplText, err := ioutil.ReadFile(tplFilename)
 	if err != nil {
