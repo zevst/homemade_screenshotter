@@ -20,9 +20,17 @@ const (
 	HeavyTxtTplSize = 80000
 )
 
+var (
+	InstallFld string
+)
+
 func init() {
-	err := godotenv.Load()
-	if err != nil {
+	if InstallFld != "" {
+		if err := os.Chdir(InstallFld); err != nil {
+			log.Fatalf("Can not chdir to %q", InstallFld)
+		}
+	}
+	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 }
