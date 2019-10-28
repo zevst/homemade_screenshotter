@@ -2,3 +2,4 @@
 /.env
 /.idea
 /homemadeScreenshotter
+.DS_Store
