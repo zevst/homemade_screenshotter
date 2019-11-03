@@ -16,9 +16,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	randStringSlugLength = 15
+)
+
 var (
-	webServer   *http.Server
-	letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
+	webServer           *http.Server
+	randStringSlugRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
 )
 
 func init() {
@@ -84,13 +88,13 @@ func onActionPanic(w http.ResponseWriter) {
 
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(message))
-		fmt.Fprint(os.Stderr, message)
+		_, _ = fmt.Fprint(os.Stderr, message)
 	}
 }
 
 // defaultAction shows any std response as "index" action
 func defaultAction(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("noaction"))
+	_, _ = w.Write([]byte("noaction"))
 }
 
 // uploadAction handles uploading, saving a file and returning back URL to file
@@ -122,7 +126,7 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 	filename := fmt.Sprintf(
 		"%s_%s.%s",
 		time.Now().Format("02.01.2006"),
-		randStringRunes(15),
+		randStringRunes(randStringSlugLength),
 		extension,
 	)
 
@@ -132,7 +136,7 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	defer f.Close()
+	defer func(f *os.File) { _ = f.Close() }(f)
 	_, err = f.Write([]byte(content))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -147,7 +151,7 @@ func uploadAction(w http.ResponseWriter, r *http.Request) {
 func randStringRunes(n int) string {
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+		b[i] = randStringSlugRunes[rand.Intn(len(randStringSlugRunes))]
 	}
 	return string(b)
 }
