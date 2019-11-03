@@ -98,7 +98,7 @@ func main() {
 	setTextInTview(tv, "Copy text or image and press \"Upload\"")
 	box.PackStart(tv, true, true, 0)
 
-	btn := setupBtn("Send To Server", func() {
+	btn := setupBtn("Upload", func() {
 		url := os.Getenv("UPLOAD_URL")
 
 		clipboard := getClipboard()
