@@ -1,5 +1,3 @@
-/scrn
-/.env
-/.idea
-/homemadeScreenshotter
-.DS_Store
+i/*.png
+i/*.html
+i/*.txt
