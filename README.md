@@ -52,7 +52,7 @@ by *nginx*, as mentioned above.
 * Clone the repo and run `git checkout server`
 * Just make this folder served by nginx under the host name, set in STATIC_SERVER_PATH
 for the *Uploader* app part. So, when your uploader returned you an URL of type
-**https://screenshots.served.here.by.nginx/i/smth.html**, it's expected from *nginx*
+<span>https://</span><span>screenshots.served.here.by.nginx/i/smth.html</span>, it's expected from *nginx*
 to seek for "smth.html" in "i" subfolder of this repo, branch *Server*.
 For example:
 ```
