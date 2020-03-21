@@ -28,7 +28,7 @@ UPLOAD_URL=https://screenshots.uploaded.here:3333/upload
 TMP_FOLDER=/tmp
 ACCESS_KEY=verY_long_secret
 ```
-* open Terminal and run `./install_ubuntu.sh`
+* open Terminal and run `./build_ubuntu.sh`, then `sudo ./install_ubuntu.sh`
 * add application icon to Favorites
 
 #### Uploader part
