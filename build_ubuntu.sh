@@ -1,5 +1,5 @@
 #!/bin/bash
-INSTALL_FLD=/opt/hms;
-sudo rm -rf $INSTALL_FLD \
-    && ln -s $(pwd) $INSTALL_FLD \
+. .env
+
+cp -f homemade-screenshotter.desktop ~/.local/share/applications \
     && go build -ldflags "-X main.InstallFld=$INSTALL_FLD" -o scrn scrn.go

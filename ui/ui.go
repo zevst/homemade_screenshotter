@@ -1,31 +1,22 @@
 package ui
 
 import (
-	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"log"
-	"os"
 )
 
-func SetupWindow(title string) *gtk.Window {
-	win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+func SetupWindow(application *gtk.Application, title string, mainFolder string) *gtk.ApplicationWindow {
+	win, err := gtk.ApplicationWindowNew(application)
 	if err != nil {
 		log.Fatal("Unable to create window:", err)
 	}
 	win.SetTitle(title)
 	if _, err := win.Connect("destroy", func() { gtk.MainQuit() }); err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	wd, err := os.Getwd()
-	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
-	}
-	fmt.Println(wd)
-	if err := win.SetIconFromFile(wd + "/icon.png"); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Error getting icon %q \r\n", err.Error())
+	if err := win.SetIconFromFile(mainFolder + "/icon.png"); err != nil {
+		log.Fatal(err)
 	}
 	win.SetDefaultSize(700, 500)
 	win.SetResizable(false)
@@ -41,19 +32,36 @@ func SetupBox(orient gtk.Orientation) *gtk.Box {
 	return box
 }
 
-func SetupTview() *gtk.TextView {
+// SetupTview creates TextView widget and a scrollable wrapper for it and return both of them. Crashes an app if any error
+func SetupTview() (*gtk.TextView, *gtk.ScrolledWindow) {
+	// create wrapper
+	scw, err := gtk.ScrolledWindowNew(nil, nil)
+	if err != nil {
+		log.Fatal("Unable to create TextView scrollable wrapper: ", err)
+	}
+	scw.SetSizeRequest(700, 230)
+
+	// create TextView widget
 	tv, err := gtk.TextViewNew()
 	if err != nil {
-		log.Fatal("Unable to create TextView:", err)
+		log.Fatal("Unable to create TextView: ", err)
 	}
-	return tv
+	//tv.SetSizeRequest(700, 230)
+	tv.SetEditable(false)
+	//tv.SetWrapMode(gtk.WRAP_WORD)
+	tv.SetMarginBottom(5)
+
+	scw.Add(tv)
+	return tv, scw
 }
 
+// SetupBtn creates Button to start uploading on server ...
 func SetupBtn(label string, onClick func()) *gtk.Button {
 	btn, err := gtk.ButtonNewWithLabel(label)
 	if err != nil {
 		log.Fatal("Unable to create button:", err)
 	}
+	btn.SetSizeRequest(700, 40)
 	_, _ = btn.Connect("clicked", onClick)
 	return btn
 }
@@ -72,6 +80,10 @@ func getTextFromTview(tv *gtk.TextView) string {
 		log.Fatal("Unable to get text:", err)
 	}
 	return text
+}
+
+func PrependTextInTview(tv *gtk.TextView, text string) {
+	SetTextInTview(tv, text+"\r\n"+getTextFromTview(tv))
 }
 
 func getBufferFromTview(tv *gtk.TextView) *gtk.TextBuffer {

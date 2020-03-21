@@ -20,6 +20,7 @@ const (
 	HeavyTxtTplSize = 80000
 )
 
+// postFile sends file to server as multipart/form-data request
 func postFile(content []byte, extension string, targetURL string) (string, error) {
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
