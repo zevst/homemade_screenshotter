@@ -22,7 +22,8 @@ dynamic bullshit is used there.
 
 #### Client part
 * install GoTK3 on your computer, [here](https://github.com/gotk3/gotk3/wiki) are instructions
-* clone this repo
+* clone this repo - `go get -d github.com/zevst/homemade_screenshotter`
+* open repo folder - `cd $GOPATH/src/github.com/zevst/homemade_screenshotter`
 * open Terminal and run `cp .env.dist .env`. Then, fill actual values in .env file - for example
 ```
 UPLOAD_URL=https://screenshots.uploaded.here:3333/upload
