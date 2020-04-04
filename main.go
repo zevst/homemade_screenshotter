@@ -5,8 +5,8 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/joho/godotenv"
-	"homemadeScreenshotter/app"
-	"homemadeScreenshotter/ui"
+	"github.com/zevst/homemade_screenshotter/app"
+	"github.com/zevst/homemade_screenshotter/ui"
 	"log"
 	"os"
 )

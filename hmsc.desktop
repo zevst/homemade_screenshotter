@@ -1,12 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Terminal=false
-Icon=/opt/hms/icon.png
+Icon=icon.png # add install icon step
 Type=Application
 Categories=screenshots;upload;share
-Exec=/opt/hms/scrn
+Exec=hmsc #return absolute path
 Name=Homemade Screenshotter
 GenericName=Homemade Screenshotter
 StartupNotify=false
 Keywords=homemade screenshots upload
-# put or ln this file to ~/.local/share/applications

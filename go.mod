@@ -1,4 +1,4 @@
-module homemadeScreenshotter
+module github.com/zevst/homemade_screenshotter
 
 go 1.12
 

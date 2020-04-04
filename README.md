@@ -22,14 +22,15 @@ dynamic bullshit is used there.
 
 #### Client part
 * install GoTK3 on your computer, [here](https://github.com/gotk3/gotk3/wiki) are instructions
+* clone this repo
 * open Terminal and run `cp .env.dist .env`. Then, fill actual values in .env file - for example
 ```
 UPLOAD_URL=https://screenshots.uploaded.here:3333/upload
 TMP_FOLDER=/tmp
 ACCESS_KEY=verY_long_secret
 ```
-* open Terminal and run `./build_ubuntu.sh`, then `sudo ./install_ubuntu.sh`
-* add application icon to Favorites
+* open Terminal and run `go build -ldflags "-X main.InstallFld=$(pwd)" -o "$GOPATH/bin/hmsc" .`
+* add application icon to Favorites (for Ubuntu - first copy **.desktop** file to **~/.local/share/applications** or **/usr/share/applications**)
 
 #### Uploader part
 * Open your server's terminal, `cd` to the folder you want to use for *Uploader*
