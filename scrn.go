@@ -37,10 +37,10 @@ func main() {
 		win.Add(box)
 
 		// both textboxes bust be added in a scrollable container, otherwise they force whole window to expand
-		historyView, historyViewWrapper := ui.SetupTview()
+		historyView, historyViewWrapper := ui.SetupLabel()
 		box.PackStart(historyViewWrapper, false, true, 0)
 
-		logView, logViewWrapper := ui.SetupTview()
+		logView, logViewWrapper := ui.SetupLabel()
 		box.Add(logViewWrapper)
 
 		btn := ui.SetupBtn("Upload", func() {
@@ -60,31 +60,34 @@ func main() {
 }
 
 // doUpload performs uploading text/img to server; triggers by click on button
-func doUpload(historyView *gtk.TextView, logView *gtk.TextView) {
+func doUpload(historyView *gtk.Label, logView *gtk.Label) {
 	url := os.Getenv("UPLOAD_URL")
-
 	clipboard := ui.GetClipboard()
 	if textContent, textErr := clipboard.WaitForText(); textErr == nil {
-		ui.SetTextInTview(logView, "upload Text ... ")
-		if fileUrl, err := app.SendTextToServer(textContent, url); err != nil {
-			ui.SetTextInTview(logView, fmt.Sprintf("Error uploading TEXT.\nDetails: \"%s\"", err.Error()))
-			return
-		} else {
-			ui.PrependTextInTview(historyView, "TXT> "+fileUrl)
-			ui.SetTextInTview(logView, "TEXT upload OK")
-			clipboard.SetText(fileUrl)
-		}
+		go func() {
+			ui.SetTextGlib(logView, "upload Text ... ")
+			if fileUrl, err := app.SendTextToServer(textContent, url); err != nil {
+				ui.SetTextGlib(logView, fmt.Sprintf("Error uploading TEXT.\nDetails: \"%s\"", err.Error()))
+				return
+			} else {
+				ui.PrependMarkupGlib(historyView, fmt.Sprintf("TXT: <a href=\"%s\">%s</a>", fileUrl, fileUrl))
+				ui.SetClipboardTextGlib(clipboard, fileUrl)
+				ui.SetTextGlib(logView, "TEXT upload OK, URL copied to clipboard")
+			}
+		}()
 	} else if imageContent, imageErr := clipboard.WaitForImage(); imageErr == nil {
-		ui.SetTextInTview(logView, "upload Image ... ")
-		if fileUrl, err := app.SendImageToServer(imageContent, url); err != nil {
-			ui.SetTextInTview(logView, fmt.Sprintf("Error uploading IMAGE.\nDetails: \"%s\"", err.Error()))
-			return
-		} else {
-			ui.PrependTextInTview(historyView, "IMG> "+fileUrl)
-			ui.SetTextInTview(logView, "IMAGE upload OK")
-			clipboard.SetText(fileUrl)
-		}
+		go func() {
+			ui.SetTextGlib(logView, "upload Image ... ")
+			if fileUrl, err := app.SendImageToServer(imageContent, url); err != nil {
+				ui.SetTextGlib(logView, fmt.Sprintf("Error uploading IMAGE.\nDetails: \"%s\"", err.Error()))
+				return
+			} else {
+				ui.PrependMarkupGlib(historyView, fmt.Sprintf("IMG: <a href=\"%s\">%s</a>", fileUrl, fileUrl))
+				ui.SetClipboardTextGlib(clipboard, fileUrl)
+				ui.SetTextGlib(logView, "IMAGE upload OK, URL copied to clipboard")
+			}
+		}()
 	} else {
-		ui.SetTextInTview(logView, "upload nothing - clipboard content undefined ")
+		logView.SetText("upload nothing - clipboard content undefined ")
 	}
 }
