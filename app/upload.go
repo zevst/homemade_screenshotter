@@ -13,7 +13,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"os"
 )
 
 const (
@@ -81,7 +80,7 @@ func postFile(content []byte, extension string, targetURL string) (string, error
 
 // hashPayload calculates HMAC sha256 of given data; key is in .env file
 func hashPayload(payload []byte) string {
-	hasher := hmac.New(sha256.New, []byte(os.Getenv("ACCESS_KEY")))
+	hasher := hmac.New(sha256.New, []byte(GetConfig().AccessKey))
 	hasher.Write(payload)
 	hash := hasher.Sum(nil)
 	return hex.EncodeToString(hash)
@@ -89,11 +88,11 @@ func hashPayload(payload []byte) string {
 
 // SendTextToServer sends data to server as text
 func SendTextToServer(text string, url string) (string, error) {
-	tplFilename := "./templates/heavy.html"
+	tplFilename := "heavy.html"
 	if len(text) < HeavyTxtTplSize {
-		tplFilename = "./templates/light.html"
+		tplFilename = "light.html"
 	}
-	tplText, err := ioutil.ReadFile(tplFilename)
+	tplText, err := GetFS().Templates.Find(tplFilename)
 	if err != nil {
 		return "", err
 	}
@@ -110,7 +109,7 @@ func SendTextToServer(text string, url string) (string, error) {
 
 // SendImageToServer sends data to server as PNG image
 func SendImageToServer(im *gdk.Pixbuf, url string) (string, error) {
-	filename := os.Getenv("TMP_FOLDER") + "/temp_img_buf"
+	filename := GetConfig().TmpFolder + "/temp_img_buf"
 	if err := im.SavePNG(filename, 9); err != nil {
 		return "", err
 	}

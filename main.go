@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/gobuffalo/packr"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/joho/godotenv"
 	"github.com/zevst/homemade_screenshotter/app"
 	"github.com/zevst/homemade_screenshotter/ui"
 	"log"
@@ -12,16 +12,19 @@ import (
 )
 
 var (
-	InstallFld string // must be set as build flag
+	// variables passed as build flags
+	UploadUrl string
+	TmpFolder string
+	AccessKey string
 )
 
 func init() {
-	if err := os.Chdir(InstallFld); err != nil {
-		log.Fatalf("Can not chdir to %q - error %q", InstallFld, err.Error())
-	}
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file: ", err)
-	}
+	cfg := app.GetConfig()
+	cfg.UploadUrl = UploadUrl
+	cfg.TmpFolder = TmpFolder
+	cfg.AccessKey = AccessKey
+	fs := app.GetFS()
+	fs.Templates = packr.NewBox("./templates")
 }
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	_, err = application.Connect("activate", func() {
 		gtk.Init(nil)
 
-		win := ui.SetupWindow(application, "Homemade Screenshotter", InstallFld)
+		win := ui.SetupWindow(application, "Homemade Screenshotter")
 		box := ui.SetupBox(gtk.ORIENTATION_VERTICAL)
 		win.Add(box)
 
@@ -61,12 +64,11 @@ func main() {
 
 // doUpload performs uploading text/img to server; triggers by click on button
 func doUpload(historyView *gtk.Label, logView *gtk.Label) {
-	url := os.Getenv("UPLOAD_URL")
 	clipboard := ui.GetClipboard()
 	if textContent, textErr := clipboard.WaitForText(); textErr == nil {
 		go func() {
 			ui.SetTextGlib(logView, "upload Text ... ")
-			if fileUrl, err := app.SendTextToServer(textContent, url); err != nil {
+			if fileUrl, err := app.SendTextToServer(textContent, app.GetConfig().UploadUrl); err != nil {
 				ui.SetTextGlib(logView, fmt.Sprintf("Error uploading TEXT.\nDetails: \"%s\"", err.Error()))
 				return
 			} else {
@@ -78,7 +80,7 @@ func doUpload(historyView *gtk.Label, logView *gtk.Label) {
 	} else if imageContent, imageErr := clipboard.WaitForImage(); imageErr == nil {
 		go func() {
 			ui.SetTextGlib(logView, "upload Image ... ")
-			if fileUrl, err := app.SendImageToServer(imageContent, url); err != nil {
+			if fileUrl, err := app.SendImageToServer(imageContent, app.GetConfig().UploadUrl); err != nil {
 				ui.SetTextGlib(logView, fmt.Sprintf("Error uploading IMAGE.\nDetails: \"%s\"", err.Error()))
 				return
 			} else {

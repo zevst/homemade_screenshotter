@@ -6,16 +6,13 @@ import (
 	"log"
 )
 
-func SetupWindow(application *gtk.Application, title string, mainFolder string) *gtk.ApplicationWindow {
+func SetupWindow(application *gtk.Application, title string) *gtk.ApplicationWindow {
 	win, err := gtk.ApplicationWindowNew(application)
 	if err != nil {
 		log.Fatal("Unable to create window:", err)
 	}
 	win.SetTitle(title)
 	if _, err := win.Connect("destroy", func() { gtk.MainQuit() }); err != nil {
-		log.Fatal(err)
-	}
-	if err := win.SetIconFromFile(mainFolder + "/icon.png"); err != nil {
 		log.Fatal(err)
 	}
 	win.SetDefaultSize(700, 500)

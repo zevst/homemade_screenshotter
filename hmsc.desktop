@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Terminal=false
-Icon=icon.png # add install icon step
+Icon=hmsc.png
 Type=Application
 Categories=screenshots;upload;share
-Exec=hmsc #return absolute path
+Exec=$GOPATH/bin/hmsc
 Name=Homemade Screenshotter
 GenericName=Homemade Screenshotter
 StartupNotify=false
